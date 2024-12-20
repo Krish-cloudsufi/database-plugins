@@ -167,3 +167,91 @@ Feature: MySQL Sink - Design time validation scenarios
     Then Enter input plugin property: "referenceName" with value: "targetRef"
     Then Click on the Validate button
     Then Verify that the Plugin is displaying an error message: "invalid.host.message" on the header
+
+  @Mysql_Required
+  Scenario: Verify required fields missing validation messages
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "MySQL" from the plugins list as: "Sink"
+    Then Navigate to the properties page of plugin: "MySQL"
+    Then Click on the Validate button
+    Then Verify mandatory property error for below listed properties:
+      | jdbcPluginName |
+      | referenceName  |
+      | database       |
+      | tableName      |
+
+  @Mysql_Required
+  Scenario: Verify the validation error message with missing jdbc plugin name
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "MySQL" from the plugins list as: "Sink"
+    Then Navigate to the properties page of plugin: "MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Click plugin property: "switch-useConnection"
+    Then Click on the Validate button
+    Then Verify that the Plugin is displaying an error message: "blank.jdbcPluginName.message" on the header
+
+  @MYSQL_SOURCE_TEST @MYSQL_TARGET_TEST @Mysql_Required
+  Scenario: Verify the validation error message with blank password value
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "MySQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "MySQL" from the plugins list as: "Sink"
+    Then Connect plugins: "MySQL" and "MySQL2" to establish connection
+    Then Navigate to the properties page of plugin: "MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Validate "MySQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "MySQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Click on the Validate button
+    Then Verify that the Plugin is displaying an error message: "blank.connection.message" on the header
+
+  @MYSQL_SOURCE_TEST @MYSQL_TARGET_TEST @Mysql_Required
+  Scenario: Verify the validation error message with blank host value
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "MySQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "MySQL" from the plugins list as: "Sink"
+    Then Connect plugins: "MySQL" and "MySQL2" to establish connection
+    Then Navigate to the properties page of plugin: "MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Validate "MySQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "MySQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Click on the Validate button
+    Then Verify that the Plugin is displaying an error message: "blank.connection.message" on the header
