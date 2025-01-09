@@ -199,3 +199,18 @@ Feature: Oracle source- Verify Oracle source plugin design time validation scena
     Then Enter textarea plugin property: "importQuery" with value: "invalidImportQuery"
     Then Click on the Validate button
     Then Verify that the Plugin Property: "user" is displaying an in-line error message: "errorMessageBlankUsername"
+
+  @Oracle_Required
+  Scenario: Verify the validation error message on header with blank database value
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "Oracle" from the plugins list as: "Source"
+    Then Navigate to the properties page of plugin: "Oracle"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Click plugin property: "switch-useConnection"
+    Then Click on the Validate button
+    Then Verify that the Plugin is displaying an error message: "blank.database.message" on the header

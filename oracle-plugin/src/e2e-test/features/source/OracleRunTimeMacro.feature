@@ -305,3 +305,64 @@ Feature: Oracle - Verify Oracle plugin data transfer with macro arguments
     Then Verify the pipeline status is "Succeeded"
     Then Close the pipeline logs
     Then Validate the values of records transferred to target Big Query table is equal to the values from source table
+
+  @ORACLE_SOURCE_TEST @ORACLE_TARGET_TEST @Oracle_Required
+  Scenario: To verify data is getting transferred from Oracle to Oracle successfully when connection arguments,Isolation level,bounding query are macro enabled
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "Oracle" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "Oracle" from the plugins list as: "Sink"
+    Then Connect plugins: "Oracle" and "Oracle2" to establish connection
+    Then Navigate to the properties page of plugin: "Oracle"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Select radio button plugin property: "connectionType" with value: "service"
+    Then Select radio button plugin property: "role" with value: "normal"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Click on the Macro button of Property: "connectionArguments" and set the value to: "connArgumentsSource"
+    Then Click on the Macro button of Property: "transactionIsolationLevel" and set the value to: "defaultTransactionIsolationLevel"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Click on the Macro button of Property: "boundingQuery" and set the value in textarea: "oracleBoundingQuery"
+    Then Validate "Oracle" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "Oracle2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Replace input plugin property: "dbSchemaName" with value: "schema"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Select radio button plugin property: "connectionType" with value: "service"
+    Then Select radio button plugin property: "role" with value: "normal"
+    Then Validate "Oracle2" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSource"
+    Then Enter runtime argument value "boundingQuery" for key "oracleBoundingQuery"
+    Then Enter runtime argument value "transactionIsolationLevel" for key "defaultTransactionIsolationLevel"
+    Then Run the preview of pipeline with runtime arguments
+    Then Wait till pipeline preview is in running state
+    Then Open and capture pipeline preview logs
+    Then Verify the preview run status of pipeline in the logs is "succeeded"
+    Then Close the pipeline logs
+    Then Close the preview
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSource"
+    Then Enter runtime argument value "boundingQuery" for key "oracleBoundingQuery"
+    Then Enter runtime argument value "transactionIsolationLevel" for key "defaultTransactionIsolationLevel"
+    Then Run the Pipeline in Runtime with runtime arguments
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Close the pipeline logs
+    Then Validate the values of records transferred to target table is equal to the values from source table
