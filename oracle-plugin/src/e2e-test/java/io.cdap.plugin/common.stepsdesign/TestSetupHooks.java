@@ -17,6 +17,8 @@
 package io.cdap.plugin.common.stepsdesign;
 
 import com.google.cloud.bigquery.BigQueryException;
+import io.cdap.e2e.pages.actions.CdfConnectionActions;
+import io.cdap.e2e.pages.actions.CdfPluginPropertiesActions;
 import io.cdap.e2e.utils.BigQueryClient;
 import io.cdap.e2e.utils.PluginPropertyUtils;
 import io.cdap.plugin.OracleClient;
@@ -48,8 +50,10 @@ public class TestSetupHooks {
     PluginPropertyUtils.addPluginProp("sourceTable", sourceTableName);
     PluginPropertyUtils.addPluginProp("targetTable", targetTableName);
     String schema = PluginPropertyUtils.pluginProp("schema");
-    PluginPropertyUtils.addPluginProp("selectQuery", String.format("select * from %s.%s", schema,
-                                                                   sourceTableName));
+    PluginPropertyUtils.addPluginProp("selectQuery", String.format("select * from %s.%s "
+        + "WHERE $CONDITIONS", schema, sourceTableName));
+    PluginPropertyUtils.addPluginProp("boundingQuery", String.format("select MIN(ID),MAX(ID)"
+        + " from %s.%s", schema, sourceTableName));
   }
 
   @Before(order = 2, value = "@ORACLE_SOURCE_TEST")
@@ -415,5 +419,26 @@ public class TestSetupHooks {
                              PluginPropertyUtils.pluginProp("targetTable"));
     BeforeActions.scenario.write("Oracle Target Table - " + PluginPropertyUtils.pluginProp("targetTable")
                                    + " deleted successfully");
+  }
+
+  @Before(order = 1, value = "@CONNECTION")
+  public static void setNewConnectionName() {
+    String connectionName = "Oracle" + RandomStringUtils.randomAlphanumeric(10);
+    PluginPropertyUtils.addPluginProp("connection.name", connectionName);
+    BeforeActions.scenario.write("New Connection name: " + connectionName);
+  }
+
+  private static void deleteConnection(String connectionType, String connectionName) throws IOException {
+    CdfConnectionActions.openWranglerConnectionsPage();
+    CdfConnectionActions.expandConnections(connectionType);
+    CdfConnectionActions.openConnectionActionMenu(connectionType, connectionName);
+    CdfConnectionActions.selectConnectionAction(connectionType, connectionName, "Delete");
+    CdfPluginPropertiesActions.clickPluginPropertyButton("Delete");
+  }
+
+  @After(order = 1, value = "@CONNECTION")
+  public static void deleteBQConnection() throws IOException {
+    deleteConnection("Oracle", "connection.name");
+    PluginPropertyUtils.removePluginProp("connection.name");
   }
 }

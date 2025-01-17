@@ -438,3 +438,110 @@ Feature: Oracle - Verify data transfer from Oracle source to BigQuery sink
     Then Verify the pipeline status is "Succeeded"
     Then Close the pipeline logs
     Then Validate the values of records transferred to target Big Query table is equal to the values from source table
+
+  @ORACLE_SOURCE_TEST @BQ_SINK_TEST @Oracle_Required
+  Scenario: To verify data is getting transferred from Oracle source to BigQuery sink successfully with bounding query
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "Oracle" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "BigQuery" from the plugins list as: "Sink"
+    Then Connect plugins: "Oracle" and "BigQuery" to establish connection
+    Then Navigate to the properties page of plugin: "Oracle"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Select radio button plugin property: "connectionType" with value: "service"
+    Then Select radio button plugin property: "role" with value: "normal"
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Enter textarea plugin property: "boundingQuery" with value: "boundingQuery"
+    Then Click on the Get Schema button
+    Then Verify the Output Schema matches the Expected Schema: "outputSchema"
+    Then Validate "Oracle" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "BigQuery"
+    Then Replace input plugin property: "project" with value: "projectId"
+    Then Enter input plugin property: "datasetProject" with value: "projectId"
+    Then Enter input plugin property: "referenceName" with value: "BQReferenceName"
+    Then Enter input plugin property: "dataset" with value: "dataset"
+    Then Enter input plugin property: "table" with value: "bqTargetTable"
+    Then Click plugin property: "truncateTable"
+    Then Click plugin property: "updateTableSchema"
+    Then Validate "BigQuery" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Wait till pipeline preview is in running state
+    Then Open and capture pipeline preview logs
+    Then Verify the preview run status of pipeline in the logs is "succeeded"
+    Then Close the pipeline logs
+    Then Close the preview
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Close the pipeline logs
+    Then Validate the values of records transferred to target Big Query table is equal to the values from source table
+
+  @ORACLE_SOURCE_TEST @BQ_SINK_TEST @CONNECTION @Oracle_Required
+  Scenario: To verify data is getting transferred from Oracle source to BigQuery sink successfully with use connection
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "Oracle" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "BigQuery" from the plugins list as: "Sink"
+    Then Connect plugins: "Oracle" and "BigQuery" to establish connection
+    Then Navigate to the properties page of plugin: "Oracle"
+    And Click plugin property: "switch-useConnection"
+    And Click on the Browse Connections button
+    And Click on the Add Connection button
+    Then Click plugin property: "connector-Oracle"
+    And Enter input plugin property: "name" with value: "connection.name"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Select radio button plugin property: "connectionType" with value: "service"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Select radio button plugin property: "role" with value: "normal"
+    Then Click on the Test Connection button
+    And Verify the test connection is successful
+    Then  Click on the Create button
+    Then Select connection: "connection.name"
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Get Schema button
+    Then Verify the Output Schema matches the Expected Schema: "outputSchema"
+    Then Validate "Oracle" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "BigQuery"
+    Then Replace input plugin property: "project" with value: "projectId"
+    Then Enter input plugin property: "datasetProject" with value: "projectId"
+    Then Enter input plugin property: "referenceName" with value: "BQReferenceName"
+    Then Enter input plugin property: "dataset" with value: "dataset"
+    Then Enter input plugin property: "table" with value: "bqTargetTable"
+    Then Click plugin property: "truncateTable"
+    Then Click plugin property: "updateTableSchema"
+    Then Validate "BigQuery" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Wait till pipeline preview is in running state
+    Then Open and capture pipeline preview logs
+    Then Verify the preview run status of pipeline in the logs is "succeeded"
+    Then Close the pipeline logs
+    Then Close the preview
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Close the pipeline logs
+    Then Validate the values of records transferred to target Big Query table is equal to the values from source table
+
