@@ -45,7 +45,10 @@ public class TestSetupHooks {
     String targetTableName = String.format("TargetTable_%s", randomString);
     PluginPropertyUtils.addPluginProp("sourceTable", sourceTableName);
     PluginPropertyUtils.addPluginProp("targetTable", targetTableName);
-    PluginPropertyUtils.addPluginProp("selectQuery", String.format("select * from %s", sourceTableName));
+    PluginPropertyUtils.addPluginProp("selectQuery", String.format("select * from %s"
+        + " WHERE $CONDITIONS", sourceTableName));
+    PluginPropertyUtils.addPluginProp("boundingQuery", String.format("select MIN(id),MAX(id)"
+        + " from %s", sourceTableName));
   }
 
   @Before(order = 1)
@@ -208,5 +211,33 @@ public class TestSetupHooks {
     }
     PluginPropertyUtils.addPluginProp("bqSourceTable", bqSourceTable);
     BeforeActions.scenario.write("BQ Source Table " + bqSourceTable + " created successfully");
+  }
+
+  @Before(order = 2, value = "@CLOUDSQLMYSQL_SOURCE_TEST")
+  public static void createSourceTestTable() throws SQLException, ClassNotFoundException {
+    CloudMySqlClient.createSourceTestTable(PluginPropertyUtils.pluginProp("sourceTable"));
+    BeforeActions.scenario.write("CLOUDMYSQL Source table - " + PluginPropertyUtils.pluginProp("sourceTable")
+        + " created successfully");
+  }
+
+  @After(order = 2, value = "@CLOUDSQLMYSQL_SOURCE_TEST")
+  public static void deleteSourceTestTable() throws SQLException, ClassNotFoundException {
+    CloudMySqlClient.deleteTable(PluginPropertyUtils.pluginProp("sourceTable"));
+    BeforeActions.scenario.write("CLOUDMYSQL Source table - " +
+        PluginPropertyUtils.pluginProp("sourceTable") + " deleted successfully");
+  }
+
+  @Before(order = 2, value = "@CLOUDSQLMYSQL_TARGET_TEST")
+  public static void createTargetTestTables() throws SQLException, ClassNotFoundException {
+    CloudMySqlClient.createTargetTestTable(PluginPropertyUtils.pluginProp("targetTable"));
+    BeforeActions.scenario.write("CLOUDMYSQL Target table - " + PluginPropertyUtils.pluginProp("targetTable")
+        + " created successfully");
+  }
+
+  @After(order = 2, value = "@CLOUDSQLMYSQL_TARGET_TEST")
+  public static void deleteTargetTestTable() throws SQLException, ClassNotFoundException {
+    CloudMySqlClient.deleteTable(PluginPropertyUtils.pluginProp("targetTable"));
+    BeforeActions.scenario.write("CLOUDMYSQL Target Table - " +
+        PluginPropertyUtils.pluginProp("targetTable") + " deleted successfully");
   }
 }

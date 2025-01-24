@@ -305,3 +305,59 @@ Feature: CloudMySql - Verify CloudMySql plugin data transfer with macro argument
     Then Verify the pipeline status is "Succeeded"
     Then Close the pipeline logs
     Then Validate the values of records transferred to target Big Query table is equal to the values from source table
+
+  @CLOUDSQLMYSQL_SOURCE_TEST @CLOUDSQLMYSQL_TARGET_TEST @CloudMySql_Required
+  Scenario: To verify data is getting transferred from CloudMySql to CloudMySql successfully when connection arguments,bounding query are macro enabled
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "CloudSQL MySQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL MySQL" from the plugins list as: "Sink"
+    Then Connect plugins: "CloudSQL MySQL" and "CloudSQL MySQL2" to establish connection
+    Then Navigate to the properties page of plugin: "CloudSQL MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Click on the Macro button of Property: "connectionArguments" and set the value to: "connArgumentsSource"
+    Then Enter input plugin property: "referenceName" with value: "RefName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Enter input plugin property: "database" with value: "DatabaseName"
+    Then Click on the Macro button of Property: "boundingQuery" and set the value in textarea: "CloudMysqlBoundingQuery"
+    Then Validate "CloudSQL MySQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "CloudSQL MySQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Click on the Macro button of Property: "connectionArguments" and set the value to: "connArgumentsSink"
+    Then Enter input plugin property: "referenceName" with value: "RefName"
+    Then Enter input plugin property: "database" with value: "DatabaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Validate "CloudSQL MySQL2" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSource"
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSink"
+    Then Enter runtime argument value "boundingQuery" for key "CloudMysqlBoundingQuery"
+    Then Run the preview of pipeline with runtime arguments
+    Then Wait till pipeline preview is in running state
+    Then Open and capture pipeline preview logs
+    Then Verify the preview run status of pipeline in the logs is "succeeded"
+    Then Close the pipeline logs
+    Then Close the preview
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSource"
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSink"
+    Then Enter runtime argument value "boundingQuery" for key "CloudMysqlBoundingQuery"
+    Then Run the Pipeline in Runtime with runtime arguments
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Close the pipeline logs
+    Then Validate the values of records transferred to target table is equal to the values from source table

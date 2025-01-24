@@ -178,4 +178,37 @@ public class CloudMySqlClient {
       statement.execute(dropTableQuery);
     }
   }
+
+  public static void createSourceTestTable(String sourceTable) throws SQLException, ClassNotFoundException {
+    try (Connection connect = getCloudSqlConnection();
+        Statement statement = connect.createStatement()) {
+      String createSourceTableQuery = "CREATE TABLE IF NOT EXISTS " + sourceTable +
+          "(id int, lastName varchar(255), PRIMARY KEY (id), is_active BOOLEAN NOT NULL)";
+      statement.executeUpdate(createSourceTableQuery);
+
+      // Truncate table to clean the data of last failure run.
+      String truncateSourceTableQuery = "TRUNCATE TABLE " + sourceTable;
+      statement.executeUpdate(truncateSourceTableQuery);
+
+      // Insert dummy data.
+      statement.executeUpdate("INSERT INTO " + sourceTable + " (id, lastName, is_active)" +
+          "VALUES (1, 'Simpson', true)");
+      statement.executeUpdate("INSERT INTO " + sourceTable + " (id, lastName, is_active)" +
+          "VALUES (2, 'McBeal', true)");
+      statement.executeUpdate("INSERT INTO " + sourceTable + " (id, lastName, is_active)" +
+          "VALUES (3, 'Flinstone', false)");
+    }
+  }
+
+  public static void createTargetTestTable(String targetTable) throws SQLException, ClassNotFoundException {
+    try (Connection connect = getCloudSqlConnection();
+        Statement statement = connect.createStatement()) {
+      String createTargetTableQuery = "CREATE TABLE IF NOT EXISTS " + targetTable +
+          "(id int, lastName varchar(255), PRIMARY KEY (id), is_active BOOLEAN NOT NULL)";
+      statement.executeUpdate(createTargetTableQuery);
+      // Truncate table to clean the data of last failure run.
+      String truncateTargetTableQuery = "TRUNCATE TABLE " + targetTable;
+      statement.executeUpdate(truncateTargetTableQuery);
+    }
+  }
 }

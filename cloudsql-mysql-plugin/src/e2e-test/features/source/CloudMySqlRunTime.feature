@@ -230,3 +230,92 @@ Feature: CloudMySql Source - Run time scenarios
     Then Open Pipeline logs and verify Log entries having below listed Level and Message:
       | Level | Message                                  |
       | ERROR | errorLogsMessageInvalidBoundingQuery     |
+
+  @CLOUDSQLMYSQL_SOURCE_TEST @CLOUDSQLMYSQL_TARGET_TEST @CloudMySql_Required
+  Scenario: To verify data is getting transferred from CloudMySql source to CloudMySql sink successfully with bounding query
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "CloudSQL MySQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL MySQL" from the plugins list as: "Sink"
+    Then Connect plugins: "CloudSQL MySQL" and "CloudSQL MySQL2" to establish connection
+    Then Navigate to the properties page of plugin: "CloudSQL MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "RefName"
+    Then Enter input plugin property: "database" with value: "DatabaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Enter textarea plugin property: "boundingQuery" with value: "boundingQuery"
+    Then Click on the Get Schema button
+    Then Verify the Output Schema matches the Expected Schema: "outputSourceSchema"
+    Then Validate "CloudSQL MySQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "CloudSQL MySQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "RefName"
+    Then Enter input plugin property: "database" with value: "DatabaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Validate "CloudSQL MySQL2" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Verify the preview of pipeline is "success"
+    Then Close the preview
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Validate the values of records transferred to target table is equal to the values from source table
+
+  @CLOUDSQLMYSQL_SOURCE_TEST @CLOUDSQLMYSQL_TARGET_TEST @CloudMySql_Required
+  Scenario: To verify data is getting transferred from CloudMySql source to CloudMySql sink successfully when connection arguments are set to read boolean datatype
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "CloudSQL MySQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL MySQL" from the plugins list as: "Sink"
+    Then Connect plugins: "CloudSQL MySQL" and "CloudSQL MySQL2" to establish connection
+    Then Navigate to the properties page of plugin: "CloudSQL MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "RefName"
+    Then Enter input plugin property: "database" with value: "DatabaseName"
+    Then Enter key value pairs for plugin property: "connectionArguments" with values from json: "connectionArgumentsForBooleanDataType"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Get Schema button
+    Then Verify the Output Schema matches the Expected Schema: "outputSourceSchema"
+    Then Validate "CloudSQL MySQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "CloudSQL MySQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "RefName"
+    Then Enter key value pairs for plugin property: "connectionArguments" with values from json: "connectionArgumentsForBooleanDataType"
+    Then Enter input plugin property: "database" with value: "DatabaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Validate "CloudSQL MySQL2" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Verify the preview of pipeline is "success"
+    Then Close the preview
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Validate the values of records transferred to target table is equal to the values from source table
