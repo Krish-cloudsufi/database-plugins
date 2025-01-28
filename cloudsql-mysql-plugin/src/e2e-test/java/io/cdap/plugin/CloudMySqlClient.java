@@ -211,4 +211,23 @@ public class CloudMySqlClient {
       statement.executeUpdate(truncateTargetTableQuery);
     }
   }
+
+  public static void createCloudMysqlSourceTable(String sourceTable) throws SQLException, ClassNotFoundException {
+    try (Connection connect = getCloudSqlConnection(); Statement statement = connect.createStatement()) {
+      String datatypesColumns = PluginPropertyUtils.pluginProp("CloudMySqlColumns");
+      String createSourceTableQuery = "CREATE TABLE " + sourceTable + " " + datatypesColumns;
+      statement.executeUpdate(createSourceTableQuery);
+      // Insert dummy data.
+      String datatypesValues = PluginPropertyUtils.pluginProp("CloudMySqlValue");
+      String datatypesColumnsList = PluginPropertyUtils.pluginProp("CloudMySqlColumnsList");
+      statement.executeUpdate("INSERT INTO " + sourceTable + " " + datatypesColumnsList + " " + datatypesValues);
+    }
+  }
+
+  public static void createCloudMysqlTargetTable(String targetTable) throws SQLException, ClassNotFoundException {
+    try (Connection connect = getCloudSqlConnection(); Statement statement = connect.createStatement()) {
+      String createTargetTableQuery = "CREATE TABLE " + targetTable + " " + dataTypesColumns;
+      statement.executeUpdate(createTargetTableQuery);
+    }
+  }
 }

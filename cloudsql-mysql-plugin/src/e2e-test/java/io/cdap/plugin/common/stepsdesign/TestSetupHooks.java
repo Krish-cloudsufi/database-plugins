@@ -16,6 +16,8 @@
 package io.cdap.plugin.common.stepsdesign;
 
 import com.google.cloud.bigquery.BigQueryException;
+import io.cdap.e2e.pages.actions.CdfConnectionActions;
+import io.cdap.e2e.pages.actions.CdfPluginPropertiesActions;
 import io.cdap.e2e.utils.BigQueryClient;
 import io.cdap.e2e.utils.PluginPropertyUtils;
 import io.cdap.plugin.CloudMySqlClient;
@@ -129,6 +131,55 @@ public class TestSetupHooks {
     CloudMySqlClient.deleteTable(PluginPropertyUtils.pluginProp("targetTable"));
     BeforeActions.scenario.write("CLOUDMYSQL Target DataTypes Table - " +
                                    PluginPropertyUtils.pluginProp("targetTable") + " deleted successfully");
+  }
+
+  @Before(order = 2, value = "@CLOUDMYSQL_SOURCE_TABLE")
+  public static void createCloudMysqlSourceTable() throws SQLException, ClassNotFoundException {
+    CloudMySqlClient.createCloudMysqlSourceTable(PluginPropertyUtils.pluginProp("sourceTable"));
+    BeforeActions.scenario.write("CLOUDMYSQL Source DataTypes table - " +
+        PluginPropertyUtils.pluginProp("sourceTable") + " created successfully");
+  }
+
+  @After(order = 2, value = "@CLOUDMYSQL_SOURCE_TABLE")
+  public static void deleteCloudMysqlSourceTable() throws SQLException, ClassNotFoundException {
+    CloudMySqlClient.deleteTable(PluginPropertyUtils.pluginProp("sourceTable"));
+    BeforeActions.scenario.write("CLOUDMYSQL Source DataTypes table - " +
+        PluginPropertyUtils.pluginProp("sourceTable") + " deleted successfully");
+  }
+
+  @Before(order = 2, value = "@CLOUDMYSQL_TARGET_TABLE")
+  public static void createCloudMysqlTargetTable() throws SQLException, ClassNotFoundException {
+    CloudMySqlClient.createCloudMysqlTargetTable(PluginPropertyUtils.pluginProp("targetTable"));
+    BeforeActions.scenario.write("CLOUDMYSQL Target DataTypes table - " +
+        PluginPropertyUtils.pluginProp("targetTable") + " created successfully");
+  }
+
+  @After(order = 2, value = "@CLOUDMYSQL_TARGET_TABLE")
+  public static void deleteCloudMysqlTargetTable() throws SQLException, ClassNotFoundException {
+    CloudMySqlClient.deleteTable(PluginPropertyUtils.pluginProp("targetTable"));
+    BeforeActions.scenario.write("CLOUDMYSQL Target DataTypes Table - " +
+        PluginPropertyUtils.pluginProp("targetTable") + " deleted successfully");
+  }
+
+  @Before(order = 1, value = "@CONNECTION")
+  public static void setNewConnectionName() {
+    String connectionName = "CloudSQLMySQL" + RandomStringUtils.randomAlphanumeric(10);
+    PluginPropertyUtils.addPluginProp("connection.name", connectionName);
+    BeforeActions.scenario.write("New Connection name: " + connectionName);
+  }
+
+  private static void deleteConnection(String connectionType, String connectionName) throws IOException {
+    CdfConnectionActions.openWranglerConnectionsPage();
+    CdfConnectionActions.expandConnections(connectionType);
+    CdfConnectionActions.openConnectionActionMenu(connectionType, connectionName);
+    CdfConnectionActions.selectConnectionAction(connectionType, connectionName, "Delete");
+    CdfPluginPropertiesActions.clickPluginPropertyButton("Delete");
+  }
+
+  @After(order = 1, value = "@CONNECTION")
+  public static void deleteTestConnection() throws IOException {
+    deleteConnection("CloudSQLMySQL", "connection.name");
+    PluginPropertyUtils.removePluginProp("connection.name");
   }
 
   @Before(order = 1, value = "@BQ_SINK_TEST")
