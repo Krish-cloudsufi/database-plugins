@@ -24,6 +24,7 @@ Feature:  CloudSQL-postgreSQL source - Verify CloudSQL-postgreSQL source plugin 
     Then Click on the Validate button
     Then Verify mandatory property error for below listed properties:
       | jdbcPluginName |
+      | connectionName |
       | database       |
       | referenceName  |
       | importQuery    |
@@ -228,3 +229,19 @@ Feature:  CloudSQL-postgreSQL source - Verify CloudSQL-postgreSQL source plugin 
     Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
     Then Click on the Validate button
     Then Verify that the Plugin is displaying an error message: "errorMessageInvalidPassword" on the header
+
+  Scenario: To verify CloudSQLPostgreSQL source plugin validation error message with invalid connection name with private instance
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Source"
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "private"
+    Then Replace input plugin property: "connectionName" with value: "invalidConnectionName"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Validate button
+    Then Verify that the Plugin Property: "connectionName" is displaying an in-line error message: "errorMessagePrivateConnectionName"

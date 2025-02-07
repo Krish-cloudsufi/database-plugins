@@ -332,3 +332,66 @@ Feature: CloudSQL-PostGreSQL source - Verify CloudSQL-PostGreSQL plugin data tra
     Then Verify the pipeline status is "Succeeded"
     Then Close the pipeline logs
     Then Validate the values of records transferred to target Big Query table is equal to the values from source table
+
+  @CLOUDSQLPOSTGRESQL_SOURCE_TEST @CLOUDSQLPOSTGRESQL_TARGET_TEST @Source_Required
+  Scenario: To verify data is getting transferred from CloudSQLPostgreSQL to CloudSQLPostgreSQL successfully when macro enabled
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Sink"
+    Then Connect plugins: "CloudSQL PostgreSQL" and "CloudSQL PostgreSQL2" to establish connection
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Click on the Macro button of Property: "connectionName" and set the value to: "cloudSQLPostgreSQLConnectionName"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Click on the Macro button of Property: "connectionArguments" and set the value to: "connArgumentsSource"
+    Then Click on the Macro button of Property: "database" and set the value to: "cloudSQLPostgreSQLdatabaseName"
+    Then Click on the Macro button of Property: "importQuery" and set the value in textarea: "cloudSQLPostgreSQLImportQuery"
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Click on the Macro button of Property: "boundingQuery" and set the value in textarea: "cloudSQLPostgreSQLBoundingQuery"
+    Then Validate "CloudSQL PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Replace input plugin property: "dbSchemaName" with value: "schema"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Click on the Macro button of Property: "connectionArguments" and set the value to: "connArgumentsSink"
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Validate "CloudSQL PostgreSQL2" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSource"
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSink"
+    Then Enter runtime argument value "selectQuery" for key "cloudSQLPostgreSQLImportQuery"
+    Then Enter runtime argument value "databaseName" for key "cloudSQLPostgreSQLdatabaseName"
+    Then Enter runtime argument value "boundingQuery" for key "cloudSQLPostgreSQLBoundingQuery"
+    Then Enter runtime argument value from environment variable "connectionName" for key "cloudSQLPostgreSQLConnectionName"
+    Then Run the preview of pipeline with runtime arguments
+    Then Wait till pipeline preview is in running state
+    Then Open and capture pipeline preview logs
+    Then Verify the preview run status of pipeline in the logs is "succeeded"
+    Then Close the pipeline logs
+    Then Close the preview
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSource"
+    Then Enter runtime argument value "connectionArguments" for key "connArgumentsSink"
+    Then Enter runtime argument value "selectQuery" for key "cloudSQLPostgreSQLImportQuery"
+    Then Enter runtime argument value "databaseName" for key "cloudSQLPostgreSQLdatabaseName"
+    Then Enter runtime argument value "boundingQuery" for key "cloudSQLPostgreSQLBoundingQuery"
+    Then Enter runtime argument value from environment variable "connectionName" for key "cloudSQLPostgreSQLConnectionName"
+    Then Run the Pipeline in Runtime with runtime arguments
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Close the pipeline logs
+    Then Validate the values of records transferred to target table is equal to the values from source table

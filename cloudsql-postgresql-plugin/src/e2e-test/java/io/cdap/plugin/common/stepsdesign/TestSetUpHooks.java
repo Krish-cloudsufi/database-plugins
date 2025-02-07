@@ -17,6 +17,8 @@
 package io.cdap.plugin.common.stepsdesign;
 
 import com.google.cloud.bigquery.BigQueryException;
+import io.cdap.e2e.pages.actions.CdfConnectionActions;
+import io.cdap.e2e.pages.actions.CdfPluginPropertiesActions;
 import io.cdap.e2e.utils.BigQueryClient;
 import io.cdap.e2e.utils.PluginPropertyUtils;
 import io.cdap.plugin.CloudSqlPostgreSqlClient;
@@ -49,8 +51,10 @@ public class TestSetUpHooks {
     PluginPropertyUtils.addPluginProp("sourceTable", sourceTableName);
     PluginPropertyUtils.addPluginProp("targetTable", targetTableName);
     String schema = PluginPropertyUtils.pluginProp("schema");
-    PluginPropertyUtils.addPluginProp("selectQuery",
-                                      String.format("select * from %s.%s", schema, sourceTableName));
+    PluginPropertyUtils.addPluginProp("selectQuery", String.format("select * from %s.%s"
+                                          + " WHERE $CONDITIONS", schema, sourceTableName));
+    PluginPropertyUtils.addPluginProp("boundingQuery", String.format("select MIN(id),MAX(id)"
+        + " from %s.%s", schema, sourceTableName));
   }
 
   @Before(order = 2, value = "@CLOUDSQLPOSTGRESQL_SOURCE_TEST")
@@ -176,5 +180,26 @@ public class TestSetUpHooks {
     }
     PluginPropertyUtils.addPluginProp("bqSourceTable", bqSourceTable);
     BeforeActions.scenario.write("BQ Source Table " + bqSourceTable + " created successfully");
+  }
+
+  @Before(order = 1, value = "@CONNECTION")
+  public static void setNewConnectionName() {
+    String connectionName = "CloudSQLPostgreSQL" + RandomStringUtils.randomAlphanumeric(10);
+    PluginPropertyUtils.addPluginProp("connection.name", connectionName);
+    BeforeActions.scenario.write("New Connection name: " + connectionName);
+  }
+
+  private static void deleteConnection(String connectionType, String connectionName) throws IOException {
+    CdfConnectionActions.openWranglerConnectionsPage();
+    CdfConnectionActions.expandConnections(connectionType);
+    CdfConnectionActions.openConnectionActionMenu(connectionType, connectionName);
+    CdfConnectionActions.selectConnectionAction(connectionType, connectionName, "Delete");
+    CdfPluginPropertiesActions.clickPluginPropertyButton("Delete");
+  }
+
+  @After(order = 1, value = "@CONNECTION")
+  public static void deleteTestConnection() throws IOException {
+    deleteConnection("CloudSQLPostgreSQL", "connection.name");
+    PluginPropertyUtils.removePluginProp("connection.name");
   }
 }
