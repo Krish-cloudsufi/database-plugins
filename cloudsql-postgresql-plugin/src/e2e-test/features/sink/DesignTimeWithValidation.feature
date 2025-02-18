@@ -25,6 +25,7 @@ Feature: CloudSQL-PostgreSQL Sink - Verify CloudSQL-postgreSQL Sink Plugin Error
     Then Click on the Validate button
     Then Verify mandatory property error for below listed properties:
       | jdbcPluginName |
+      | connectionName |
       | referenceName  |
       | database       |
       | tableName      |
@@ -141,3 +142,135 @@ Feature: CloudSQL-PostgreSQL Sink - Verify CloudSQL-postgreSQL Sink Plugin Error
     Then Replace input plugin property: "tableName" with value: "targetTable"
     Then Click on the Validate button
     Then Verify that the Plugin Property: "user" is displaying an in-line error message: "errorMessageBlankUsername"
+
+  @Sink_Required
+  Scenario: To verify CloudSQLPostgreSQL sink plugin validation error message with invalid private connection name
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Sink"
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "private"
+    Then Replace input plugin property: "connectionName" with value: "invalidConnectionName"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Click on the Validate button
+    Then Verify that the Plugin Property: "connectionName" is displaying an in-line error message: "errorMessagePrivateConnectionName"
+
+  @CLOUDSQLPOSTGRESQL_SOURCE_TEST @CLOUDSQLPOSTGRESQL_TARGET_TEST @Sink_Required
+  Scenario: To verify CloudSQLPostgreSQL sink plugin validation error message with blank password
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Sink"
+    Then Connect plugins: "CloudSQL PostgreSQL" and "CloudSQL PostgreSQL2" to establish connection
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Get Schema button
+    Then Verify the Output Schema matches the Expected Schema: "datatypesSchema"
+    Then Validate "CloudSQL PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Click on the Validate button
+    Then Verify that the Plugin is displaying an error message: "errorMessageWithBlankPassword" on the header
+
+  @CLOUDSQLPOSTGRESQL_SOURCE_TEST @CLOUDSQLPOSTGRESQL_TARGET_TEST @Sink_Required
+  Scenario Outline: To verify CloudSQLPostgreSQL sink plugin validation error message for update, upsert operation name and table key
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Sink"
+    Then Connect plugins: "CloudSQL PostgreSQL" and "CloudSQL PostgreSQL2" to establish connection
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Get Schema button
+    Then Verify the Output Schema matches the Expected Schema: "datatypesSchema"
+    Then Validate "CloudSQL PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Replace input plugin property: "dbSchemaName" with value: "schema"
+    Then Select radio button plugin property: "operationName" with value: "<options>"
+    Then Click on the Validate button
+    Then Verify that the Plugin Property: "operationName" is displaying an in-line error message: "errorMessageUpdateUpsertOperationName"
+    Then Verify that the Plugin Property: "relationTableKey" is displaying an in-line error message: "errorMessageUpdateUpsertOperationName"
+    Examples:
+      | options |
+      | upsert  |
+      | update  |
+
+  @CLOUDSQLPOSTGRESQL_SOURCE_TEST @CLOUDSQLPOSTGRESQL_TARGET_TEST @Sink_Required
+  Scenario Outline: To verify pipeline preview failed with invalid table key
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Sink"
+    Then Connect plugins: "CloudSQL PostgreSQL" and "CloudSQL PostgreSQL2" to establish connection
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Get Schema button
+    Then Verify the Output Schema matches the Expected Schema: "datatypesSchema"
+    Then Validate "CloudSQL PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Replace input plugin property: "dbSchemaName" with value: "schema"
+    Then Select radio button plugin property: "operationName" with value: "<options>"
+    Then Click on the Add Button of the property: "relationTableKey" with value:
+      | invalidCloudSQLPostgreSQLTableKey |
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Verify the preview of pipeline is "Failed"
+    Examples:
+      | options |
+      | upsert  |
+      | update  |

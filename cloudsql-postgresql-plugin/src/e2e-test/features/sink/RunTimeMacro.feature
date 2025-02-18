@@ -132,3 +132,60 @@ Feature: CloudSQL-PostgreSQL sink - Verify data transfer to PostgreSQL sink with
     Then Verify the pipeline status is "Succeeded"
     Then Close the pipeline logs
     Then Validate the values of records transferred to target CloudPostgreSQL table is equal to the values from BigQuery table
+
+  @BQ_SOURCE_TEST @CLOUDSQLPOSTGRESQL_TEST_TABLE @Sink_Required
+  Scenario: To verify data is getting transferred from BigQuery to CloudSQLPostgreSQL successfully when macro enabled
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "BigQuery" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Sink"
+    Then Connect plugins: "BigQuery" and "CloudSQL PostgreSQL" to establish connection
+    Then Navigate to the properties page of plugin: "BigQuery"
+    Then Replace input plugin property: "project" with value: "projectId"
+    Then Enter input plugin property: "datasetProject" with value: "projectId"
+    Then Enter input plugin property: "referenceName" with value: "BQReferenceName"
+    Then Enter input plugin property: "dataset" with value: "dataset"
+    Then Enter input plugin property: "table" with value: "bqSourceTable"
+    Then Click on the Get Schema button
+    Then Verify the Output Schema matches the Expected Schema: "bqOutputMultipleDatatypesSchema"
+    Then Validate "BigQuery" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Click on the Macro button of Property: "connectionName" and set the value to: "cloudSQLPostgreSQLConnectionName"
+    Then Click on the Macro button of Property: "database" and set the value to: "cloudSQLPostgreSQLDatabaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Replace input plugin property: "dbSchemaName" with value: "schema"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Click on the Macro button of Property: "operationName" and set the value to: "CloudSQLPostgreSQLOperationName"
+    Then Click on the Macro button of Property: "relationTableKey" and set the value to: "CloudSQLPostgreSQLTableKey"
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Validate "CloudSQL PostgreSQL2" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Enter runtime argument value "databaseName" for key "cloudSQLPostgreSQLDatabaseName"
+    Then Enter runtime argument value from environment variable "connectionName" for key "cloudSQLPostgreSQLConnectionName"
+    Then Enter runtime argument value "operationName" for key "CloudSQLPostgreSQLOperationName"
+    Then Enter runtime argument value "relationTableKey" for key "CloudSQLPostgreSQLTableKey"
+    Then Run the preview of pipeline with runtime arguments
+    Then Wait till pipeline preview is in running state
+    Then Open and capture pipeline preview logs
+    Then Verify the preview run status of pipeline in the logs is "succeeded"
+    Then Close the pipeline logs
+    Then Close the preview
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Enter runtime argument value "databaseName" for key "cloudSQLPostgreSQLDatabaseName"
+    Then Enter runtime argument value from environment variable "connectionName" for key "cloudSQLPostgreSQLConnectionName"
+    Then Enter runtime argument value "operationName" for key "CloudSQLPostgreSQLOperationName"
+    Then Enter runtime argument value "relationTableKey" for key "CloudSQLPostgreSQLTableKey"
+    Then Run the Pipeline in Runtime with runtime arguments
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Close the pipeline logs
+    Then Validate the values of records transferred to target CloudPostgreSQL table is equal to the values from BigQuery table
