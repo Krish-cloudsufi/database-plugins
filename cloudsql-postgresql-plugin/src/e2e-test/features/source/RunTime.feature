@@ -64,7 +64,7 @@ Feature: CloudSQL-PostGreSQL Source - Run Time scenarios
     Then Validate the values of records transferred to target Big Query table is equal to the values from source table
 
   @CLOUDSQLPOSTGRESQL_SOURCE_TEST @BQ_SINK_TEST @PLUGIN-1526
-  Scenario: To verify data is getting transferred from PostgreSQL source to BigQuery sink successfully when connection arguments are set
+  Scenario: To verify data is getting transferred from CloudSQLPostgreSQL source to BigQuery sink successfully when connection arguments are set
     Given Open Datafusion Project to configure pipeline
     When Expand Plugin group in the LHS plugins list: "Source"
     When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Source"
@@ -188,11 +188,11 @@ Feature: CloudSQL-PostGreSQL Source - Run Time scenarios
     Then Close the Plugin Properties page
     Then Save the pipeline
     Then Preview and run the pipeline
-    Then Wait till pipeline preview is in running state
+    Then Wait till pipeline preview is in running state and check if any error occurs
     Then Verify the preview run status of pipeline in the logs is "failed"
 
   @CLOUDSQLPOSTGRESQL_SOURCE_TEST @CLOUDSQLPOSTGRESQL_TARGET_TEST
-  Scenario: To verify data is getting transferred from PostgreSQL to PostgreSQL successfully with supported datatypes
+  Scenario: To verify data is getting transferred from CloudSQLPostgreSQL to CloudSQLPostgreSQL successfully with supported datatypes
     Given Open Datafusion Project to configure pipeline
     When Expand Plugin group in the LHS plugins list: "Source"
     When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Source"
@@ -206,6 +206,102 @@ Feature: CloudSQL-PostGreSQL Source - Run Time scenarios
     Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
     Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
     Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Get Schema button
+    Then Verify the Output Schema matches the Expected Schema: "datatypesSchema"
+    Then Validate "CloudSQL PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Replace input plugin property: "dbSchemaName" with value: "schema"
+    Then Validate "CloudSQL PostgreSQL2" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Verify the preview of pipeline is "success"
+    Then Click on the Preview Data link on the Sink plugin node: "CloudSQLPostgreSQL"
+    Then Close the preview data
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Validate the values of records transferred to target table is equal to the values from source table
+
+  @CLOUDSQLPOSTGRESQL_SOURCE_TEST @CLOUDSQLPOSTGRESQL_TARGET_TEST @CONNECTION @Source_Required
+  Scenario: To verify data is getting transferred from CloudSQLPostgreSQL to CloudSQLPostgreSQL successfully with use connection
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Sink"
+    Then Connect plugins: "CloudSQL PostgreSQL" and "CloudSQL PostgreSQL2" to establish connection
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL"
+    And Click plugin property: "switch-useConnection"
+    And Click on the Browse Connections button
+    And Click on the Add Connection button
+    Then Click plugin property: "connector-CloudSQLPostgreSQL"
+    And Enter input plugin property: "name" with value: "connection.name"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Click on the Test Connection button
+    And Verify the test connection is successful
+    Then Click on the Create button
+    Then Select connection: "connection.name"
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Get Schema button
+    Then Verify the Output Schema matches the Expected Schema: "datatypesSchema"
+    Then Validate "CloudSQL PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL2"
+    And Click plugin property: "switch-useConnection"
+    And Click on the Browse Connections button
+    Then Select connection: "connection.name"
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Replace input plugin property: "dbSchemaName" with value: "schema"
+    Then Validate "CloudSQL PostgreSQL2" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Verify the preview of pipeline is "success"
+    And Close the preview
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Validate the values of records transferred to target table is equal to the values from source table
+
+  @CLOUDSQLPOSTGRESQL_SOURCE_TEST @CLOUDSQLPOSTGRESQL_TARGET_TEST @Source_Required
+  Scenario: To verify data is getting transferred from CloudSQLPostgreSQL to CloudSQLPostgreSQL successfully with bounding query
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL PostgreSQL" from the plugins list as: "Sink"
+    Then Connect plugins: "CloudSQL PostgreSQL" and "CloudSQL PostgreSQL2" to establish connection
+    Then Navigate to the properties page of plugin: "CloudSQL PostgreSQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Enter textarea plugin property: "boundingQuery" with value: "boundingQuery"
     Then Replace input plugin property: "database" with value: "databaseName"
     Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
     Then Click on the Get Schema button
