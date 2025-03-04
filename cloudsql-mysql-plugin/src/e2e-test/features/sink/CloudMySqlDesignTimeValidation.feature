@@ -130,3 +130,66 @@ Feature: CloudMySql sink- Verify CloudsqlMysql sink plugin design time validatio
     Then Enter input plugin property: "tableName" with value: "mytable"
     Then Click on the Validate button
     Then Verify that the Plugin Property: "connectionName" is displaying an in-line error message: "errorMessageConnectionName"
+
+  @CloudMySql_Required
+  Scenario: Verify CloudSQLMySQL source plugin validation errors for mandatory fields
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL MySQL" from the plugins list as: "Sink"
+    Then Navigate to the properties page of plugin: "CloudSQL MySQL"
+    Then Click on the Validate button
+    Then Verify mandatory property error for below listed properties:
+      | jdbcPluginName |
+      | connectionName |
+      | database       |
+      | referenceName  |
+      | tableName      |
+
+  @CloudMySql_Required
+  Scenario: To verify CloudSQLMySQL source plugin validation error message with invalid connection name with private instance
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL MySQL" from the plugins list as: "Sink"
+    Then Navigate to the properties page of plugin: "CloudSQL MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "private"
+    Then Enter input plugin property: "connectionName" with value: "invalidConnectionName"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "RefName"
+    Then Enter input plugin property: "database" with value: "TestDatabase"
+    Then Enter input plugin property: "tableName" with value: "mytable"
+    Then Click on the Validate button
+    Then Verify that the Plugin Property: "connectionName" is displaying an in-line error message: "errorMessagePrivateConnectionName"
+
+  @CLOUDMYSQL_SOURCE_TEST @CLOUDMYSQL_TARGET_TEST @CloudMySql_Required
+  Scenario: To verify CloudMySql sink plugin validation error message with blank password
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "CloudSQL MySQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "CloudSQL MySQL" from the plugins list as: "Sink"
+    Then Connect plugins: "CloudSQL MySQL" and "CloudSQL MySQL2" to establish connection
+    Then Navigate to the properties page of plugin: "CloudSQL MySQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "RefName"
+    Then Enter input plugin property: "database" with value: "DatabaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Get Schema button
+    Then Verify the Output Schema matches the Expected Schema: "datatypesSchema"
+    Then Validate "CloudSQL MySQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "CloudSQL MySQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Select radio button plugin property: "instanceType" with value: "public"
+    Then Replace input plugin property: "connectionName" with value: "connectionName" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "RefName"
+    Then Enter input plugin property: "database" with value: "DatabaseName"
+    Then Enter input plugin property: "tableName" with value: "mytable"
+    Then Click on the Validate button
+    Then Verify that the Plugin is displaying an error message: "errorMessageWithBlankPassword" on the header

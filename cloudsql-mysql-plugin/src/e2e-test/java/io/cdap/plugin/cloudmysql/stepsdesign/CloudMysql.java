@@ -21,6 +21,7 @@ import io.cdap.e2e.utils.CdfHelper;
 import io.cdap.e2e.utils.PluginPropertyUtils;
 import io.cdap.plugin.CloudMySqlClient;
 import io.cdap.plugin.cloudmysql.BQValidation;
+import io.cdap.plugin.cloudmysql.actions.CloudSQLMySQLActions;
 import io.cucumber.java.en.Then;
 import org.junit.Assert;
 import stepsdesign.BeforeActions;
@@ -81,5 +82,10 @@ public class CloudMysql implements CdfHelper {
       bqSourceTable, targetTable);
     Assert.assertTrue("Value of records transferred to the target table should be equal to the value " +
                         "of the records in the source table", recordsMatched);
+  }
+
+  @Then("Enter input plugin property with value: {string}")
+  public void enterInputPluginPropertyWithValue(String database) {
+    CloudSQLMySQLActions.enterValueInInputProperty(PluginPropertyUtils.pluginProp(database));
   }
 }
