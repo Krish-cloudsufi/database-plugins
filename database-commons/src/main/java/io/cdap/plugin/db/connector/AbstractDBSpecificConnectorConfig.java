@@ -45,10 +45,6 @@ public abstract class AbstractDBSpecificConnectorConfig extends AbstractDBConnec
   @Nullable
   protected Integer port;
 
-  @Name(ConnectionConfig.ROLE)
-  @Description("Login role of the user when connecting to the database.")
-  @Nullable
-  protected String role;
 
   @Name(ConnectionConfig.TRANSACTION_ISOLATION_LEVEL)
   @Description("The transaction isolation level for the database session.")
@@ -70,15 +66,10 @@ public abstract class AbstractDBSpecificConnectorConfig extends AbstractDBConnec
     return super.canConnect() && !containsMacro(ConnectionConfig.HOST) && !containsMacro(ConnectionConfig.PORT);
   }
 
-  public String getRole() {
-    return role == null ? "normal" : role;
-  }
-
   public String getTransactionIsolationLevel() {
     if (transactionIsolationLevel == null) {
       transactionIsolationLevel = TransactionIsolationLevel.Level.TRANSACTION_SERIALIZABLE.name();
     }
-    return (!getRole().equals(ROLE_NORMAL)) ? TransactionIsolationLevel.Level.TRANSACTION_READ_COMMITTED.name() :
-      TransactionIsolationLevel.Level.valueOf(transactionIsolationLevel).name();
+    return TransactionIsolationLevel.Level.valueOf(transactionIsolationLevel).name();
   }
 }
