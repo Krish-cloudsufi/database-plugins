@@ -31,8 +31,6 @@ import javax.annotation.Nullable;
  */
 public abstract class AbstractDBSpecificConnectorConfig extends AbstractDBConnectorConfig {
 
-  private static final String ROLE_NORMAL = "normal";
-
   @Name(ConnectionConfig.HOST)
   @Description("Database host")
   @Macro

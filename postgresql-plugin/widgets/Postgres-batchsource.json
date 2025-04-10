@@ -66,29 +66,6 @@
           "name": "password"
         },
         {
-          "label": "Role",
-          "name": "role",
-          "widget-type": "radio-group",
-          "widget-attributes": {
-            "layout": "inline",
-            "default": "normal",
-            "options": [
-              {
-                "id": "normal",
-                "label": "Normal"
-              },
-              {
-                "id": "sysdba",
-                "label": "SYSDBA"
-              },
-              {
-                "id": "sysoper",
-                "label": "SYSOPER"
-              }
-            ]
-          }
-        },
-        {
           "widget-type": "select",
           "label": "Transaction Isolation Level",
           "name": "transactionIsolationLevel",
@@ -217,18 +194,6 @@
   ],
   "filters": [
     {
-      "name": "showIsolationLevels",
-      "condition": {
-        "expression": "role == 'normal'"
-      },
-      "show": [
-        {
-          "type": "property",
-          "name": "transactionIsolationLevel"
-        }
-      ]
-    },
-    {
       "name": "showConnectionProperties ",
       "condition": {
         "expression": "useConnection == false"
@@ -253,10 +218,6 @@
         {
           "type": "property",
           "name": "port"
-        },
-        {
-          "type": "property",
-          "name": "role"
         },
         {
           "type": "property",
