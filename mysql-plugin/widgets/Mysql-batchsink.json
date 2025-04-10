@@ -245,6 +245,18 @@
   "outputs": [],
   "filters": [
     {
+      "name": "showIsolationLevels",
+      "condition": {
+        "expression": "role == 'normal'"
+      },
+      "show": [
+        {
+          "type": "property",
+          "name": "transactionIsolationLevel"
+        }
+      ]
+    },
+    {
       "name": "showConnectionProperties ",
       "condition": {
         "expression": "useConnection == false"
@@ -261,6 +273,10 @@
         {
           "type": "property",
           "name": "password"
+        },
+        {
+          "type": "property",
+          "name": "transactionIsolationLevel"
         },
         {
           "type": "property",
