@@ -66,7 +66,7 @@ public abstract class AbstractDBSpecificConnectorConfig extends AbstractDBConnec
 
   public String getTransactionIsolationLevel() {
     if (transactionIsolationLevel == null) {
-      transactionIsolationLevel = TransactionIsolationLevel.Level.TRANSACTION_SERIALIZABLE.name();
+      transactionIsolationLevel = TransactionIsolationLevel.Level.TRANSACTION_READ_COMMITTED.name();
     }
     return TransactionIsolationLevel.Level.valueOf(transactionIsolationLevel).name();
   }
