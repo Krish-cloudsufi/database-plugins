@@ -118,6 +118,7 @@ public class OracleConnectorConfig extends AbstractDBSpecificConnectorConfig {
     return prop;
   }
 
+  @Override
   public String getTransactionIsolationLevel() {
     //if null default to the highest isolation level possible
     if (transactionIsolationLevel == null) {
@@ -128,15 +129,6 @@ public class OracleConnectorConfig extends AbstractDBSpecificConnectorConfig {
     //if role is SYSDBA or SYSOP it will map to read_committed. else serialized
     return (!getRole().equals(ROLE_NORMAL)) ? TransactionIsolationLevel.Level.TRANSACTION_READ_COMMITTED.name() :
       TransactionIsolationLevel.Level.valueOf(transactionIsolationLevel).name();
-  }
-
-  @Override
-  public Map<String, String> getAdditionalArguments() {
-    Map<String, String> additonalArguments = new HashMap<>();
-    if (getTransactionIsolationLevel() != null) {
-      additonalArguments.put(TransactionIsolationLevel.CONF_KEY, getTransactionIsolationLevel());
-    }
-    return additonalArguments;
   }
 
   @Override

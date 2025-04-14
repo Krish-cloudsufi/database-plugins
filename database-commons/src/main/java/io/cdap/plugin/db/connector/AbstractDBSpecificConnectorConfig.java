@@ -23,6 +23,7 @@ import io.cdap.plugin.db.ConnectionConfig;
 import io.cdap.plugin.db.TransactionIsolationLevel;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
 
@@ -61,6 +62,15 @@ public abstract class AbstractDBSpecificConnectorConfig extends AbstractDBConnec
 
   public boolean canConnect() {
     return super.canConnect() && !containsMacro(ConnectionConfig.HOST) && !containsMacro(ConnectionConfig.PORT);
+  }
+
+  @Override
+  public Map<String, String> getAdditionalArguments() {
+    Map<String, String> additonalArguments = new HashMap<>();
+    if (getTransactionIsolationLevel() != null) {
+      additonalArguments.put(TransactionIsolationLevel.CONF_KEY, getTransactionIsolationLevel());
+    }
+    return additonalArguments;
   }
 
   public String getTransactionIsolationLevel() {
