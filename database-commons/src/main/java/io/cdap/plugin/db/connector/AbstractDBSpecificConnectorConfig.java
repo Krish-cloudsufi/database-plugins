@@ -43,7 +43,6 @@ public abstract class AbstractDBSpecificConnectorConfig extends AbstractDBConnec
   @Nullable
   protected Integer port;
 
-
   @Name(ConnectionConfig.TRANSACTION_ISOLATION_LEVEL)
   @Description("The transaction isolation level for the database session.")
   @Macro
@@ -66,7 +65,7 @@ public abstract class AbstractDBSpecificConnectorConfig extends AbstractDBConnec
 
   public String getTransactionIsolationLevel() {
     if (transactionIsolationLevel == null) {
-      transactionIsolationLevel = TransactionIsolationLevel.Level.TRANSACTION_READ_COMMITTED.name();
+      return null;
     }
     return TransactionIsolationLevel.Level.valueOf(transactionIsolationLevel).name();
   }
