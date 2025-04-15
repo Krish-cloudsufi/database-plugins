@@ -136,3 +136,51 @@ Feature: PostgreSQL - Verify data transfer to PostgreSQL sink with macro argumen
     Then Verify the pipeline status is "Succeeded"
     Then Close the pipeline logs
     Then Validate the values of records transferred to target PostgreSQL table is equal to the values from source BigQuery table
+
+  @BQ_SOURCE_TEST @Postgresql_Required @POSTGRESQL_TEST_TABLE @Plugin-1526
+  Scenario: To verify data is getting transferred from BigQuery source to PostgreSQL sink using connection arguments and operations as macro
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "BigQuery" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "PostgreSQL" from the plugins list as: "Sink"
+    Then Connect plugins: "BigQuery" and "PostgreSQL" to establish connection
+    Then Navigate to the properties page of plugin: "BigQuery"
+    Then Enter input plugin property: "referenceName" with value: "BQReferenceName"
+    Then Click on the Macro button of Property: "projectId" and set the value to: "bqProjectId"
+    Then Click on the Macro button of Property: "datasetProjectId" and set the value to: "bqDatasetProjectId"
+    Then Click on the Macro button of Property: "dataset" and set the value to: "bqDataset"
+    Then Click on the Macro button of Property: "table" and set the value to: "bqTable"
+    Then Validate "BigQuery" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "PostgreSQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Click on the Macro button of Property: "connectionArguments" and set the value to: "PostgreSQLConnectionArguments"
+    Then Click on the Macro button of Property: "operationName" and set the value to: "PostgreSQLOperationName"
+    Then Click on the Macro button of Property: "tableName" and set the value to: "PostgreSQLTableName"
+    Then Click on the Macro button of Property: "dbSchemaName" and set the value to: "PostgreSQLSchemaName"
+    Then Validate "PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Enter runtime argument value "projectId" for key "bqProjectId"
+    Then Enter runtime argument value "projectId" for key "bqDatasetProjectId"
+    Then Enter runtime argument value "dataset" for key "bqDataset"
+    Then Enter runtime argument value "bqSourceTable" for key "bqTable"
+    Then Enter runtime argument value "PostgreSQLConnectionArgumentsList" for key "PostgreSQLConnectionArguments"
+    Then Enter runtime argument value "PostgreSQLOperationName" for key "PostgreSQLOperationName"
+    Then Enter runtime argument value "targetTable" for key "PostgreSQLTableName"
+    Then Enter runtime argument value "schema" for key "PostgreSQLSchemaName"
+    Then Run the Pipeline in Runtime with runtime arguments
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Close the pipeline logs
+    Then Validate the values of records transferred to target PostgreSQL table is equal to the values from source BigQuery table

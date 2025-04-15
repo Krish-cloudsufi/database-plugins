@@ -144,3 +144,152 @@ Feature: PostgreSQL - Verify data transfer from BigQuery source to PostgreSQL si
     Then Open and capture logs
     Then Verify the pipeline status is "Succeeded"
     Then Validate the values of records transferred to target PostgreSQL table is equal to the values from source BigQuery table
+
+  @POSTGRESQL_SOURCE_TEST @Postgresql_Required @POSTGRESQL_SINK_TEST @Plugin-1526
+  Scenario: To verify data is getting transferred from PostgreSQL source to PostgreSQL sink with Advanced operations Upsert for table key
+    Given Open Datafusion Project to configure pipeline
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "PostgreSQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "PostgreSQL" from the plugins list as: "Sink"
+    Then Connect plugins: "PostgreSQL" and "PostgreSQL2" to establish connection
+    Then Navigate to the properties page of plugin: "PostgreSQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Get Schema button
+    Then Validate "PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "PostgreSQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Replace input plugin property: "dbSchemaName" with value: "schema"
+    Then Select radio button plugin property: "operationName" with value: "upsert"
+    Then Click on the Add Button of the property: "relationTableKey" with value:
+      | PostgreSQLTableKey |
+    Then Validate "PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Verify the preview of pipeline is "success"
+    Then Click on preview data for PostgreSQL sink
+    Then Close the preview data
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Validate the values of records transferred to target table is equal to the values from source table
+
+  @POSTGRESQL_SOURCE_TEST @Postgresql_Required @POSTGRESQL_SINK_TEST @Plugin-1526
+  Scenario: To verify data is getting transferred from PostgreSQL source to PostgreSQL sink with Advanced operations Update for table key
+    Given Open Datafusion Project to configure pipeline
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "PostgreSQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "PostgreSQL" from the plugins list as: "Sink"
+    Then Connect plugins: "PostgreSQL" and "PostgreSQL2" to establish connection
+    Then Navigate to the properties page of plugin: "PostgreSQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Get Schema button
+    Then Validate "PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "PostgreSQL2"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Replace input plugin property: "dbSchemaName" with value: "schema"
+    Then Select radio button plugin property: "operationName" with value: "update"
+    Then Click on the Add Button of the property: "relationTableKey" with value:
+      | PostgreSQLTableKey |
+    Then Validate "PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Verify the preview of pipeline is "success"
+    Then Click on preview data for PostgreSQL sink
+    Then Close the preview data
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Validate the values of records transferred to target table is equal to the values from source table
+
+  @POSTGRESQL_SOURCE_TEST @POSTGRESQL_SINK_TEST @Postgresql_Required @CONNECTION @Plugin-1526
+  Scenario: To verify data is getting transferred from PostgreSQL source to PostgreSQL sink successfully using Connection
+    Given Open Datafusion Project to configure pipeline
+    When Expand Plugin group in the LHS plugins list: "Source"
+    When Select plugin: "PostgreSQL" from the plugins list as: "Source"
+    When Expand Plugin group in the LHS plugins list: "Sink"
+    When Select plugin: "PostgreSQL" from the plugins list as: "Sink"
+    Then Connect plugins: "PostgreSQL" and "PostgreSQL2" to establish connection
+    Then Navigate to the properties page of plugin: "PostgreSQL"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Enter input plugin property: "referenceName" with value: "sourceRef"
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Enter textarea plugin property: "importQuery" with value: "selectQuery"
+    Then Click on the Get Schema button
+    Then Validate "PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Navigate to the properties page of plugin: "PostgreSQL2"
+    And Click plugin property: "switch-useConnection"
+    And Click on the Browse Connections button
+    And Click on the Add Connection button
+    Then Click plugin property: "connector-PostgreSQL"
+    And Enter input plugin property: "name" with value: "connection.name"
+    Then Select dropdown plugin property: "select-jdbcPluginName" with option value: "driverName"
+    Then Replace input plugin property: "host" with value: "host" for Credentials and Authorization related fields
+    Then Replace input plugin property: "port" with value: "port" for Credentials and Authorization related fields
+    Then Replace input plugin property: "user" with value: "username" for Credentials and Authorization related fields
+    Then Replace input plugin property: "password" with value: "password" for Credentials and Authorization related fields
+    Then Replace input plugin property: "database" with value: "databaseName"
+    Then Click on the Test Connection button
+    And Verify the test connection is successful
+    Then  Click on the Create button
+    Then Select connection: "connection.name"
+    Then Enter input plugin property: "referenceName" with value: "targetRef"
+    Then Replace input plugin property: "tableName" with value: "targetTable"
+    Then Replace input plugin property: "dbSchemaName" with value: "schema"
+    Then Validate "PostgreSQL" plugin properties
+    Then Close the Plugin Properties page
+    Then Save the pipeline
+    Then Preview and run the pipeline
+    Then Verify the preview of pipeline is "success"
+    Then Click on preview data for PostgreSQL sink
+    Then Close the preview data
+    Then Deploy the pipeline
+    Then Run the Pipeline in Runtime
+    Then Wait till pipeline is in running state
+    Then Open and capture logs
+    Then Verify the pipeline status is "Succeeded"
+    Then Validate the values of records transferred to target table is equal to the values from source table
