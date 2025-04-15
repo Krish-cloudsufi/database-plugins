@@ -37,6 +37,8 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mapreduce.lib.db.DBConfiguration;
 import org.apache.hadoop.mapreduce.lib.db.DBWritable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -56,6 +58,7 @@ public abstract class AbstractDBSpecificConnector<T extends DBWritable> extends 
   implements BatchConnector<LongWritable, T> {
 
   private final AbstractDBConnectorConfig config;
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractDBSpecificConnector.class);
 
   protected AbstractDBSpecificConnector(AbstractDBConnectorConfig config) {
     super(config);
@@ -99,6 +102,7 @@ public abstract class AbstractDBSpecificConnector<T extends DBWritable> extends 
       tableQuery, null, false);
     connectionConfigAccessor.setConnectionArguments(Maps.fromProperties(config.getConnectionArgumentsProperties()));
     connectionConfigAccessor.getConfiguration().setInt(MRJobConfig.NUM_MAPS, 1);
+    LOG.debug("Moving inside AbstractDBConnectorConfig");
     Map<String, String> additionalArguments = config.getAdditionalArguments();
     for (Map.Entry<String, String> argument : additionalArguments.entrySet()) {
       connectionConfigAccessor.getConfiguration().set(argument.getKey(), argument.getValue());

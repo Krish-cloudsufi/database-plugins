@@ -21,6 +21,8 @@ import io.cdap.cdap.api.annotation.Macro;
 import io.cdap.cdap.api.annotation.Name;
 import io.cdap.plugin.db.ConnectionConfig;
 import io.cdap.plugin.db.TransactionIsolationLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,9 +34,11 @@ import javax.annotation.Nullable;
  */
 public abstract class AbstractDBSpecificConnectorConfig extends AbstractDBConnectorConfig {
 
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractDBSpecificConnectorConfig.class);
   @Name(ConnectionConfig.HOST)
   @Description("Database host")
   @Macro
+
   @Nullable
   protected String host;
 
@@ -67,6 +71,7 @@ public abstract class AbstractDBSpecificConnectorConfig extends AbstractDBConnec
   @Override
   public Map<String, String> getAdditionalArguments() {
     Map<String, String> additonalArguments = new HashMap<>();
+    LOG.debug("inside get AdditionalArguemnts of AbstractDBSpecificConnectorConfig");
     if (getTransactionIsolationLevel() != null) {
       additonalArguments.put(TransactionIsolationLevel.CONF_KEY, getTransactionIsolationLevel());
     }
@@ -74,9 +79,11 @@ public abstract class AbstractDBSpecificConnectorConfig extends AbstractDBConnec
   }
 
   public String getTransactionIsolationLevel() {
+    LOG.debug("Hi Krish, INSIDE AbstractDBSpecificConnectorCOnfig getTransactionIsolationLevel");
     if (transactionIsolationLevel == null) {
       return null;
     }
     return TransactionIsolationLevel.Level.valueOf(transactionIsolationLevel).name();
   }
 }
+

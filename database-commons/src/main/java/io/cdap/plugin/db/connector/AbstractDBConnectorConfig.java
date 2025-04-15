@@ -25,6 +25,8 @@ import io.cdap.cdap.api.plugin.PluginConfig;
 import io.cdap.plugin.common.KeyValueListParser;
 import io.cdap.plugin.common.db.DBConnectorProperties;
 import io.cdap.plugin.db.ConnectionConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,6 +38,8 @@ import javax.annotation.Nullable;
  *
  */
 public abstract class AbstractDBConnectorConfig extends PluginConfig implements DBConnectorProperties {
+
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractDBConnectorConfig.class);
 
   @Name(ConnectionConfig.JDBC_PLUGIN_NAME)
   @Description("Name of the JDBC driver to use. This is the value of the 'jdbcPluginName' key defined in the JSON " +
@@ -113,6 +117,7 @@ public abstract class AbstractDBConnectorConfig extends PluginConfig implements 
   }
 
   public Map<String, String> getAdditionalArguments() {
+    LOG.debug("inside get Additional argument of AbstractDBConnectorConfig");
     return Collections.emptyMap();
   }
 
