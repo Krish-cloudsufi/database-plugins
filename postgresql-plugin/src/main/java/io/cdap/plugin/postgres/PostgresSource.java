@@ -36,6 +36,8 @@ import io.cdap.plugin.db.config.AbstractDBSpecificSourceConfig;
 import io.cdap.plugin.db.source.AbstractDBSource;
 import io.cdap.plugin.util.DBUtils;
 import org.apache.hadoop.mapreduce.lib.db.DBWritable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -49,6 +51,8 @@ import javax.annotation.Nullable;
   " Outputs one record for each row returned by the query.")
 @Metadata(properties = {@MetadataProperty(key = Connector.PLUGIN_TYPE, value = PostgresConnector.NAME)})
 public class PostgresSource extends AbstractDBSource<PostgresSource.PostgresSourceConfig> {
+
+  private static final Logger LOG = LoggerFactory.getLogger(PostgresSource.class);
 
   private final PostgresSourceConfig postgresSourceConfig;
 
@@ -144,8 +148,14 @@ public class PostgresSource extends AbstractDBSource<PostgresSource.PostgresSour
     }
 
     @Override
+    public String getTransactionIsolationLevel() {
+      return connection.getTransactionIsolationLevel();
+    }
+
+    @Override
     public void validate(FailureCollector collector) {
       ConfigUtil.validateConnection(this, useConnection, connection, collector);
+      connection.getAdditionalArguments();
       super.validate(collector);
     }
 

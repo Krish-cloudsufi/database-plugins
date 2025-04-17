@@ -19,6 +19,7 @@ package io.cdap.plugin.postgres;
 import io.cdap.cdap.api.annotation.Description;
 import io.cdap.cdap.api.annotation.Macro;
 import io.cdap.cdap.api.annotation.Name;
+import io.cdap.plugin.db.TransactionIsolationLevel;
 import io.cdap.plugin.db.connector.AbstractDBSpecificConnectorConfig;
 
 /**

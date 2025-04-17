@@ -39,6 +39,11 @@ You also can use the macro function ${conn(connection-name)}.
 
 **Password:** Password to use to connect to the specified database.
 
+**Transaction Isolation Level** The transaction isolation level of the databse connection
+- TRANSACTION_READ_COMMITTED: No dirty reads. Non-repeatable reads and phantom reads are possible.
+- TRANSACTION_SERIALIZABLE: No dirty reads. Non-repeatable and phantom reads are prevented.
+- TRANSACTION_REPEATABLE_READ: No dirty reads. Prevents non-repeatable reads, but phantom reads are still possible.
+
 **Connection Arguments:** A list of arbitrary string key/value pairs as connection arguments. These arguments
 will be passed to the JDBC driver as connection arguments for JDBC drivers that may need additional configurations.
 

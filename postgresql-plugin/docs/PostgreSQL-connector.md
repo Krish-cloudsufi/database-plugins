@@ -22,6 +22,11 @@ authentication. Optional for databases that do not require authentication.
 
 **Password:** Password to use to connect to the specified database.
 
+**Transaction Isolation Level** The transaction isolation level of the databse connection
+- TRANSACTION_READ_COMMITTED: No dirty reads. Non-repeatable reads and phantom reads are possible.
+- TRANSACTION_SERIALIZABLE: No dirty reads. Non-repeatable and phantom reads are prevented.
+- TRANSACTION_REPEATABLE_READ: No dirty reads. Prevents non-repeatable reads, but phantom reads are still possible.
+
 **Database:** The name of the database to connect to.
 
 **Connection Arguments:** A list of arbitrary string tag/value pairs as connection arguments. These arguments

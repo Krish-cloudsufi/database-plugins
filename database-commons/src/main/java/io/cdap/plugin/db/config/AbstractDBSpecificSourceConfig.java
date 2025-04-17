@@ -28,6 +28,8 @@ import io.cdap.plugin.common.Constants;
 import io.cdap.plugin.db.TransactionIsolationLevel;
 import io.cdap.plugin.db.connector.AbstractDBConnectorConfig;
 import io.cdap.plugin.db.source.AbstractDBSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -49,6 +51,7 @@ public abstract class AbstractDBSpecificSourceConfig extends PluginConfig implem
   public static final String DATABASE = "database";
   public static final String FETCH_SIZE = "fetchSize";
   public static final String DEFAULT_FETCH_SIZE = "1000";
+  public static final Logger LOG = LoggerFactory.getLogger(AbstractDBSpecificSourceConfig.class);
 
   @Name(Constants.Reference.REFERENCE_NAME)
   @Description(Constants.Reference.REFERENCE_NAME_DESCRIPTION)
