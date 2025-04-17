@@ -205,6 +205,7 @@ public class MysqlSource extends AbstractDBSource<MysqlSource.MysqlSourceConfig>
     @Override
     public void validate(FailureCollector collector) {
       ConfigUtil.validateConnection(this, useConnection, connection, collector);
+      connection.getAdditionalArguments();
       super.validate(collector);
     }
 

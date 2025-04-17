@@ -155,7 +155,6 @@ public class PostgresSource extends AbstractDBSource<PostgresSource.PostgresSour
     @Override
     public void validate(FailureCollector collector) {
       ConfigUtil.validateConnection(this, useConnection, connection, collector);
-      LOG.debug("Hi Krish, transaction level is: {}", connection.getTransactionIsolationLevel());
       connection.getAdditionalArguments();
       super.validate(collector);
     }

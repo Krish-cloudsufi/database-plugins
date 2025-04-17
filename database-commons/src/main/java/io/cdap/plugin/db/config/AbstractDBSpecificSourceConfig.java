@@ -208,7 +208,6 @@ public abstract class AbstractDBSpecificSourceConfig extends PluginConfig implem
   }
 
   public String getTransactionIsolationLevel() {
-    LOG.debug("Hi Krish Inside AbstractDBSpecificSourceConfig getTransactionIsolationLevel ");
     return null;
   }
 

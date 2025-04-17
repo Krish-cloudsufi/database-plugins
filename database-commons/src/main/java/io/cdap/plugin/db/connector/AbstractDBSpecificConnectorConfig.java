@@ -79,7 +79,6 @@ public abstract class AbstractDBSpecificConnectorConfig extends AbstractDBConnec
   }
 
   public String getTransactionIsolationLevel() {
-    LOG.debug("Hi Krish, INSIDE AbstractDBSpecificConnectorCOnfig getTransactionIsolationLevel");
     if (transactionIsolationLevel == null) {
       return null;
     }
