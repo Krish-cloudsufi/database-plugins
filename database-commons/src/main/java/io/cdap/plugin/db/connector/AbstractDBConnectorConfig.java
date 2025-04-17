@@ -117,7 +117,6 @@ public abstract class AbstractDBConnectorConfig extends PluginConfig implements 
   }
 
   public Map<String, String> getAdditionalArguments() {
-    LOG.debug("inside get Additional argument of AbstractDBConnectorConfig");
     return Collections.emptyMap();
   }
 
