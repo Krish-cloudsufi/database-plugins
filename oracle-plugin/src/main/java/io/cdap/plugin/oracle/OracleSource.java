@@ -124,12 +124,12 @@ public class OracleSource extends AbstractDBSource<OracleSource.OracleSourceConf
     @Nullable
     private Integer defaultRowPrefetch;
 
-    @Name("treatAsOldTimestamp")
+    @Name(TREAT_AS_OLD_TIMESTAMP)
     @Description("For internal use only. If set to true, DATETIME types will be treated as TIMESTAMP_MICROS to maintain backward compatibility.")
     @Macro
     @Nullable
     @MetadataProperty(key = "hidden", value = "true")
-    private boolean treatAsOldTimestamp;
+    private boolean treatAsOldTimestamp = false;
 
 
     public OracleSourceConfig(String host, int port, String user, String password, String jdbcPluginName,
