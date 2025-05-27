@@ -190,17 +190,6 @@ public class OracleSource extends AbstractDBSource<OracleSource.OracleSourceConf
     @Override
     protected void validateField(FailureCollector collector,
                                  Schema.Field field, Schema actualFieldSchema, Schema expectedFieldSchema) {
-      // For handling backward compatibility with pipelines built prior to plugin version change.
-      // If the config flag 'treatAsOldTimestamp' is enabled, allow DATETIME fields (actual schema)
-      // to be treated as TIMESTAMP_MICROS (expected schema). This preserves legacy behavior where
-      // non-UTC timestamp fields were interpreted as TIMESTAMP_MICROS.
-      if (shouldTreatAsOldTimestamp()) {
-        if (Schema.LogicalType.DATETIME.equals(actualFieldSchema.getLogicalType())
-          && Schema.LogicalType.TIMESTAMP_MICROS.equals(expectedFieldSchema.getLogicalType())) {
-          return;
-        }
-      }
-
       // This change is needed to make sure that the pipeline upgrade continues to work post upgrade.
       // Since the older handling of the precision less used to convert to the decimal type,
       // and the new version would try to convert to the String type. In that case the output schema would
