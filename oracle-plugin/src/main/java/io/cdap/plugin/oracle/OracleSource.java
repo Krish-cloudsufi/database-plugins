@@ -101,6 +101,7 @@ public class OracleSource extends AbstractDBSource<OracleSource.OracleSourceConf
     public static final String NAME_CONNECTION = "connection";
     public static final String DEFAULT_ROW_PREFETCH_VALUE = "40";
     public static final String DEFAULT_BATCH_SIZE = "10";
+    public static final String TREAT_AS_OLD_TIMESTAMP = "treatAsOldTimestamp";
 
     @Name(NAME_USE_CONNECTION)
     @Nullable
@@ -122,6 +123,14 @@ public class OracleSource extends AbstractDBSource<OracleSource.OracleSourceConf
     @Description("The default number of rows to prefetch from the server.")
     @Nullable
     private Integer defaultRowPrefetch;
+
+    @Name("treatAsOldTimestamp")
+    @Description("For internal use only. If set to true, DATETIME types will be treated as TIMESTAMP_MICROS to maintain backward compatibility.")
+    @Macro
+    @Nullable
+    @MetadataProperty(key = "hidden", value = "true")
+    private boolean treatAsOldTimestamp;
+
 
     public OracleSourceConfig(String host, int port, String user, String password, String jdbcPluginName,
                               String connectionArguments, String connectionType, String database, String role,
@@ -163,6 +172,10 @@ public class OracleSource extends AbstractDBSource<OracleSource.OracleSourceConf
       return connection;
     }
 
+    public boolean shouldTreatAsOldTimestamp() {
+      return treatAsOldTimestamp;
+    }
+
     @Override
     public void validate(FailureCollector collector) {
       ConfigUtil.validateConnection(this, useConnection, connection, collector);
@@ -177,6 +190,17 @@ public class OracleSource extends AbstractDBSource<OracleSource.OracleSourceConf
     @Override
     protected void validateField(FailureCollector collector,
                                  Schema.Field field, Schema actualFieldSchema, Schema expectedFieldSchema) {
+      // For handling backward compatibility with pipelines built prior to plugin version change.
+      // If the config flag 'treatAsOldTimestamp' is enabled, allow DATETIME fields (actual schema)
+      // to be treated as TIMESTAMP_MICROS (expected schema). This preserves legacy behavior where
+      // non-UTC timestamp fields were interpreted as TIMESTAMP_MICROS.
+      if (shouldTreatAsOldTimestamp()) {
+        if (Schema.LogicalType.DATETIME.equals(actualFieldSchema.getLogicalType())
+          && Schema.LogicalType.TIMESTAMP_MICROS.equals(expectedFieldSchema.getLogicalType())) {
+          return;
+        }
+      }
+
       // This change is needed to make sure that the pipeline upgrade continues to work post upgrade.
       // Since the older handling of the precision less used to convert to the decimal type,
       // and the new version would try to convert to the String type. In that case the output schema would
