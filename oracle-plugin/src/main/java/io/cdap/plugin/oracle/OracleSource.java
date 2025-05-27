@@ -125,10 +125,10 @@ public class OracleSource extends AbstractDBSource<OracleSource.OracleSourceConf
     private Integer defaultRowPrefetch;
 
     @Name(TREAT_AS_OLD_TIMESTAMP)
-    @Description("For internal use only. If set to true, DATETIME types will be treated as TIMESTAMP_MICROS to maintain backward compatibility.")
+    @Description("For internal use only. If set to true, DATETIME types will be treated as TIMESTAMP_MICROS to maintain"
+      + "backward compatibility.")
     @Macro
     @Nullable
-    @MetadataProperty(key = "hidden", value = "true")
     private boolean treatAsOldTimestamp = false;
 
 
