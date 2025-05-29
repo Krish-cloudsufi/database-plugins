@@ -174,11 +174,7 @@ public class OracleSource extends AbstractDBSource<OracleSource.OracleSourceConf
     }
 
     public Boolean shouldTreatAsOldTimestamp() {
-      if (treatAsOldTimestamp == null) {
-        return false;
-      } else {
-        return treatAsOldTimestamp;
-      }
+      return Boolean.TRUE.equals(treatAsOldTimestamp);
     }
 
     @Override
