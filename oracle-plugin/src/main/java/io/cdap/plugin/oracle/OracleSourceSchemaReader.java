@@ -72,7 +72,7 @@ public class OracleSourceSchemaReader extends CommonSchemaReader {
     this(null, false);
   }
 
-  public OracleSourceSchemaReader(String sessionID, boolean treatAsOldTimestamp) {
+  public OracleSourceSchemaReader(String sessionID, Boolean treatAsOldTimestamp) {
     super();
     this.sessionID = sessionID;
     this.treatAsOldTimestamp = treatAsOldTimestamp;
@@ -86,6 +86,7 @@ public class OracleSourceSchemaReader extends CommonSchemaReader {
       case TIMESTAMP_TZ:
         return Schema.of(Schema.LogicalType.TIMESTAMP_MICROS);
       case Types.TIMESTAMP:
+        return Schema.of(Schema.LogicalType.DATETIME);
       case TIMESTAMP_LTZ:
         if (treatAsOldTimestamp) {
           return Schema.of(Schema.LogicalType.TIMESTAMP_MICROS);

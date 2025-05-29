@@ -63,7 +63,7 @@ public class OracleSource extends AbstractDBSource<OracleSource.OracleSourceConf
 
   @Override
   protected SchemaReader getSchemaReader() {
-    return new OracleSourceSchemaReader();
+    return new OracleSourceSchemaReader(null, oracleSourceConfig.shouldTreatAsOldTimestamp());
   }
 
   @Override
@@ -129,14 +129,14 @@ public class OracleSource extends AbstractDBSource<OracleSource.OracleSourceConf
       + "backward compatibility.")
     @Macro
     @Nullable
-    private boolean treatAsOldTimestamp = false;
+    private Boolean treatAsOldTimestamp = false;
 
 
     public OracleSourceConfig(String host, int port, String user, String password, String jdbcPluginName,
                               String connectionArguments, String connectionType, String database, String role,
                               int defaultBatchValue, int defaultRowPrefetch,
                               String importQuery, Integer numSplits, int fetchSize,
-                              String boundingQuery, String splitBy, Boolean useSSL, boolean treatAsOldTimestamp) {
+                              String boundingQuery, String splitBy, Boolean useSSL, Boolean treatAsOldTimestamp) {
       this.connection = new OracleConnectorConfig(host, port, user, password, jdbcPluginName, connectionArguments,
                                                   connectionType, database, role, useSSL);
       this.defaultBatchValue = defaultBatchValue;
@@ -173,8 +173,12 @@ public class OracleSource extends AbstractDBSource<OracleSource.OracleSourceConf
       return connection;
     }
 
-    public boolean shouldTreatAsOldTimestamp() {
-      return treatAsOldTimestamp;
+    public Boolean shouldTreatAsOldTimestamp() {
+      if (treatAsOldTimestamp == null) {
+        return false;
+      } else {
+        return treatAsOldTimestamp;
+      }
     }
 
     @Override
